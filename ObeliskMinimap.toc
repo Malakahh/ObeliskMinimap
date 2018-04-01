@@ -6,6 +6,7 @@
 
 ## SavedVariables: OMM
 
-minimap.lua
 libs\ObeliskFramework\ObeliskInclude.xml
+options.lua
+minimap.lua
 buttonCollector.lua

@@ -1,104 +1,77 @@
---local _, ns = ...
---ns.OBELISK_DEBUG = true
+local _, ns = ...
 
-local libGridView = ObeliskFrameworkManager:GetLibrary("ObeliskGridView", 0)
+local libGridView = ObeliskFrameworkManager:GetLibrary("ObeliskGridView", 1)
 if not libGridView then
 	print("libGridView not gotten")
 end
 
-local frame = CreateFrame("Frame", "ObeliskMinimapButtonCollector", UIParent);
+local cellSize = 32
+
+local frame = libGridView(0, 0, "ObeliskMinimapButtonCollector", Minimap);
 frame:SetScript("OnEvent", function ( self, event, ... ) self[event](self, ...) end)
 frame:RegisterEvent("PLAYER_LOGIN")
 
--- frame:SetSize(200,100)
--- frame:SetPoint("TOPLEFT", 25, -25)
-
--- frame.tex = frame:CreateTexture(nil, "BACKGROUND")
--- frame.tex:SetColorTexture(0,1,0,0.15)
--- frame.tex:SetAllPoints()
-
--- frame:Show()
+frame:SetPoint("TOPLEFT", Minimap, "BOTTOMLEFT", 25, -25)
+frame:Show()
 
 frame.CollectedButtons = {}
 
-local padding = 10
+local Includes = {
+	--GarrisonLandingPageMinimapButton = true, 
+	MiniMapTracking = true,
+}
 
 local Excludes = {
+	ObeliskMinimapButtonCollector = true,
 	MinimapBackdrop = true,
 	MiniMapMailFrame = true,
 	MiniMapVoiceChatFrame = true,
 	GameTimeFrame = true,
-	DBMMinimapButton = true,
+	--DBMMinimapButton = true,
 	TimeManagerClockButton = true,
 }
 
 local function IsExcluded(val)
-	if type(val) == "string" then
-		print("Exclude, str: " .. val .. " - " .. tostring(Excludes[val]))
+	local t = type(val)
+	if t == "string" then
 		return Excludes[val] or false
-	elseif type(val) == "table" and val.GetName ~= nil then
-		print("Exclude, table: " .. val:GetName() .. " - " .. tostring(Excludes[val:GetName()]))
+	elseif t == "table" and val.GetName ~= nil then
 		return Excludes[val:GetName()] or false
 	else
-		print("Exclude, unexpected")
 		return false
 	end
 end
 
 function frame:PLAYER_LOGIN( ... )
+	ns.Options:RegisterForOkay(self.Initialize, self)
+	self:SetCellSize(cellSize, cellSize)
 	self:CollectButtons()
-	--self:InvalidateCollector()
-	self.gridView = libGridView(100,50,"Whee", UIParent)
-	self.gridView:SetPoint("TOPLEFT", 25, -25)
-	self.gridView:Show()
+	self:Initialize()
+end
+
+function frame:Initialize()
+	self:AdjustSize()
+	self:Update()
 end
 
 function frame:CollectButtons( ... )
+	for k, _ in pairs(Includes) do
+		self:AddItem(_G[k])
+	end
+
 	for k,v in pairs({Minimap:GetChildren()}) do
 		if not IsExcluded(v) then
-			table.insert(frame.CollectedButtons, v)
+			v:SetSize(cellSize, cellSize)
+			self:AddItem(v)
+			v:Show()
 		end
 	end
 end
 
-function frame:InvalidateCollector( ... )
-	local W, H = self:GetSize()
-	local wCells, hCells = 10,2
-	local row = 0
-	local col = 0
+function frame:AdjustSize()
+	local numRows = math.ceil(self:ItemCount() / OMM.ButtonCollector.NumColumns)
 
-	print(self.CollectedButtons)
-
-	for i = 1, #self.CollectedButtons, 1 do
-		local btn = self.CollectedButtons[i]
-
-		if btn ~= nil then
-			if col * btn:GetWidth() + col * padding + btn:GetWidth() > self:GetWidth() then
-				col = 0
-				row = row + 1
-			end
-
-			self:PlaceButton(btn, btn:GetWidth() * col + padding * col, -btn:GetHeight() * row - padding * row)
-			col = col + 1
-		end
-	end
+	self:SetNumColumns(OMM.ButtonCollector.NumColumns)
+	self:SetSize(cellSize * OMM.ButtonCollector.NumColumns, cellSize * numRows)
 end
 
-function frame:PlaceButton(btn, x, y)
-	btn:SetParent(self)
-	btn.debugTexShape = btn:CreateTexture(nil, "BACKGROUND")
-	btn.debugTexShape:SetColorTexture(0,0,1,0.5)
-	btn.debugTexShape:SetAllPoints()
-	btn:SetFrameStrata("BACKGROUND")
-	btn:ClearAllPoints()
-	btn:SetPoint("TOPLEFT", self, "TOPLEFT", x, y)
-
-	local positionFrame = CreateFrame("Frame", nil, self)
-	positionFrame:SetSize(5,5)
-	positionFrame.positionTex = positionFrame:CreateTexture(nil, "BACKGROUND")
-	positionFrame.positionTex:SetColorTexture(1,0,0,0.5)
-	positionFrame.positionTex:SetAllPoints()
-	positionFrame:SetFrameStrata("TOOLTIP")
-	positionFrame:Show()
-	positionFrame:SetPoint("TOPLEFT", self, "TOPLEFT", x, y)
-end
