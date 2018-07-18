@@ -30,14 +30,21 @@ local fontName, fontHeight = ns.ButtonCollectorDropdown.coordinates:GetFont()
 ns.ButtonCollectorDropdown.coordinates:SetFont(fontName, fontHeight, "THINOUTLINE")
 ns.ButtonCollectorDropdown.coordinates:SetPoint("TOP", 0, -coordnateOffset)
 
+-- Used to avoid LUA error on login
+local onFirstUpdate = true
 local function OnUpdate(self, ... )
-	local x,y = C_Map.GetPlayerMapPosition(C_Map.GetBestMapForUnit("player"), "player"):GetXY()
+	local x,y
+	if not onFirstUpdate then
+		x,y = C_Map.GetPlayerMapPosition(C_Map.GetBestMapForUnit("player"), "player"):GetXY()
+	end
 
 	if x ~= nil and y ~= nil then
 		self.coordinates:SetText(string.format("(%.1f, %.1f)", x * 100, y * 100))
 	else
 		self.coordinates:SetText("Coords Unavailable")
 	end
+
+	onFirstUpdate = false
 end
 
 ns.ButtonCollectorDropdown:SetScript("OnUpdate", OnUpdate)
