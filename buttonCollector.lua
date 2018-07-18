@@ -1,4 +1,4 @@
-local _, ns = ...
+local addonName, ns = ...
 
 local libGridView = ObeliskFrameworkManager:GetLibrary("ObeliskGridView", 1)
 if not libGridView then
@@ -7,14 +7,54 @@ end
 
 local cellSize = 32
 
-local frame = libGridView(0, 0, "ObeliskMinimapButtonCollector", Minimap);
-frame:SetScript("OnEvent", function ( self, event, ... ) self[event](self, ...) end)
-frame:RegisterEvent("PLAYER_LOGIN")
+ns.ButtonCollectorDropdown = CreateFrame("FRAME", addonName .. "ButtonCollector", MinimapCluster)
+ns.ButtonCollectorDropdown:SetPoint("CENTER")
+ns.ButtonCollectorDropdown:SetBackdrop({
+	bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+	edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+	tile = true,
+	tileSize = 16,
+	edgeSize = 16,
+	insets = { left = 4, right = 4, top = 4, bottom = 4}
+	})
+ns.ButtonCollectorDropdown:SetBackdropColor(0, 0, 0, 1)
+ns.ButtonCollectorDropdown:SetClampedToScreen(true)
+ns.ButtonCollectorDropdown:Hide()
 
-frame:SetPoint("TOPLEFT", Minimap, "BOTTOMLEFT", 25, -25)
-frame:Show()
 
-frame.CollectedButtons = {}
+--Coordinates
+local coordnateOffset = 10
+
+ns.ButtonCollectorDropdown.coordinates = ns.ButtonCollectorDropdown:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+local fontName, fontHeight = ns.ButtonCollectorDropdown.coordinates:GetFont()
+ns.ButtonCollectorDropdown.coordinates:SetFont(fontName, fontHeight, "THINOUTLINE")
+ns.ButtonCollectorDropdown.coordinates:SetPoint("TOP", 0, -coordnateOffset)
+
+local function OnUpdate(self, ... )
+	local x,y = C_Map.GetPlayerMapPosition(C_Map.GetBestMapForUnit("player"), "player"):GetXY()
+
+	if x ~= nil and y ~= nil then
+		self.coordinates:SetText(string.format("(%.1f, %.1f)", x * 100, y * 100))
+	else
+		self.coordinates:SetText("Coords Unavailable")
+	end
+end
+
+ns.ButtonCollectorDropdown:SetScript("OnUpdate", OnUpdate)
+OnUpdate(ns.ButtonCollectorDropdown)
+
+
+-- gridview
+local spacing = 7
+local padding = 7
+
+ns.ButtonCollectorDropdown.gridView = libGridView(0, 0, nil, ns.ButtonCollectorDropdown);
+ns.ButtonCollectorDropdown.gridView:SetScript("OnEvent", function ( self, event, ... ) self[event](self, ...) end)
+ns.ButtonCollectorDropdown.gridView:RegisterEvent("PLAYER_LOGIN")
+ns.ButtonCollectorDropdown.gridView:SetPoint("TOPLEFT", padding, -math.ceil(ns.ButtonCollectorDropdown.coordinates:GetHeight()) - spacing - coordnateOffset)
+ns.ButtonCollectorDropdown.gridView:SetPoint("BOTTOMRIGHT", -padding, padding)
+
+ns.ButtonCollectorDropdown.gridView.CollectedButtons = {}
 
 local Includes = {
 	--GarrisonLandingPageMinimapButton = true, 
@@ -26,7 +66,7 @@ local Excludes = {
 	MinimapBackdrop = true,
 	MiniMapMailFrame = true,
 	MiniMapVoiceChatFrame = true,
-	GameTimeFrame = true,
+	--GameTimeFrame = true,
 	--DBMMinimapButton = true,
 	TimeManagerClockButton = true,
 }
@@ -42,19 +82,19 @@ local function IsExcluded(val)
 	end
 end
 
-function frame:PLAYER_LOGIN( ... )
+function ns.ButtonCollectorDropdown.gridView:PLAYER_LOGIN( ... )
 	ns.Options:RegisterForOkay(self.Initialize, self)
 	self:SetCellSize(cellSize, cellSize)
 	self:CollectButtons()
 	self:Initialize()
 end
 
-function frame:Initialize()
+function ns.ButtonCollectorDropdown.gridView:Initialize()
 	self:AdjustSize()
 	self:Update()
 end
 
-function frame:CollectButtons( ... )
+function ns.ButtonCollectorDropdown.gridView:CollectButtons( ... )
 	for k, _ in pairs(Includes) do
 		self:AddItem(_G[k])
 	end
@@ -68,10 +108,12 @@ function frame:CollectButtons( ... )
 	end
 end
 
-function frame:AdjustSize()
+function ns.ButtonCollectorDropdown.gridView:AdjustSize()
 	local numRows = math.ceil(self:ItemCount() / OMM.ButtonCollector.NumColumns)
 
 	self:SetNumColumns(OMM.ButtonCollector.NumColumns)
-	self:SetSize(cellSize * OMM.ButtonCollector.NumColumns, cellSize * numRows)
+	ns.ButtonCollectorDropdown:SetSize(
+		math.ceil(cellSize * OMM.ButtonCollector.NumColumns + padding * 2),
+		math.ceil(cellSize * numRows + spacing + ns.ButtonCollectorDropdown.coordinates:GetHeight() + padding + coordnateOffset))
 end
 

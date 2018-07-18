@@ -24,7 +24,7 @@ local defaultSettings = {
 		Height = 190,
 	},
 	ButtonCollector = {
-		NumColumns = 4,
+		NumColumns = 5,
 	},
 }
 
