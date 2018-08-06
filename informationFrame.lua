@@ -2,22 +2,31 @@ local addonName, ns = ...
 
 local frame = CreateFrame("FRAME", addonName .. "InformationFrame", MinimapCluster)
 frame:SetScript("OnEvent", function(self, event, ... ) self[event](self, ...) end)
-frame:RegisterEvent("PLAYER_LOGIN")
+frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-function frame:PLAYER_LOGIN( ... )
-	--self:SetSize(OMM.Minimap.Width + 10, 45)
+local function MoveLateFrames( ... )
+	VehicleSeatIndicator:SetParent(frame)
+	VehicleSeatIndicator:ClearAllPoints()
+	VehicleSeatIndicator:SetPoint("TOPRIGHT", 0, -50)
+	VehicleSeatIndicator:SetFrameStrata("BACKGROUND")
+
+	DurabilityFrame:SetParent(frame)
+	DurabilityFrame:ClearAllPoints()
+	DurabilityFrame:SetPoint("TOPRIGHT", -35, -50)
+	DurabilityFrame:SetFrameStrata("BACKGROUND")
+end
+
+function frame:PLAYER_ENTERING_WORLD( ... )
 	self:SetSize(OMM.Minimap.Width + 10, 90)
 
 	GarrisonLandingPageMinimapButton:SetParent(self)
 	GarrisonLandingPageMinimapButton:SetSize(28, 28)
 	GarrisonLandingPageMinimapButton:ClearAllPoints()
-	--GarrisonLandingPageMinimapButton:SetPoint("BOTTOMLEFT", 7, 5)
 	GarrisonLandingPageMinimapButton:SetPoint("TOPLEFT", 15, -15)
 
 	QueueStatusMinimapButton:SetParent(self)
 	QueueStatusMinimapButton:SetSize(33, 33)
 	QueueStatusMinimapButton:ClearAllPoints()
-	--QueueStatusMinimapButton:SetPoint("BOTTOMLEFT", 33, 3)
 	QueueStatusMinimapButton:SetPoint("TOPLEFT", 41, -12)
 	QueueStatusMinimapButtonBorder:Hide()
 	QueueStatusMinimapButtonIcon:SetSize(QueueStatusMinimapButton:GetSize())
@@ -25,11 +34,12 @@ function frame:PLAYER_LOGIN( ... )
 	MiniMapMailFrame:SetParent(self)
 	MiniMapMailFrame:SetSize(20, 20)
 	MiniMapMailFrame:ClearAllPoints()
---	MiniMapMailFrame:SetPoint("BOTTOMRIGHT", -48, 15)
 	MiniMapMailFrame:SetPoint("TOPRIGHT", -52, -12)
 	MiniMapMailBorder:Hide()
 	MiniMapMailIcon:SetSize(MiniMapMailFrame:GetSize())
 	MiniMapMailIcon:SetTexture("Interface\\MINIMAP\\TRACKING\\Mailbox")
+
+	hooksecurefunc("UIParent_ManageFramePositions", MoveLateFrames)
 end
 
 frame:SetPoint("TOP", MinimapCluster, "BOTTOM", 0, 5)
@@ -70,7 +80,6 @@ end)
 
 frame.buttonCollectorToggle = CreateFrame("CheckButton", addonName .. "ButtonCollectorToggle", frame)
 frame.buttonCollectorToggle:SetSize(38, 38)
---frame.buttonCollectorToggle:SetPoint("BOTTOMRIGHT", -5, 0)
 frame.buttonCollectorToggle:SetPoint("TOPRIGHT", -10, -8)
 frame.buttonCollectorToggle:SetNormalTexture("Interface\\VEHICLES\\UI-VEHICLES-BUTTON-PITCHDOWN-UP")
 frame.buttonCollectorToggle:SetCheckedTexture("Interface\\VEHICLES\\UI-Vehicles-Button-Pitch-Down")
