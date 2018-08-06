@@ -2,7 +2,7 @@
 ## Title: |cFFDDCF99Obelisk|r Minimap
 ## Author: Malakahh
 ## Notes: A clean minimap featuring coordinates, latency and framerate, and masking. It also collects and stores minimap buttons
-## Version: r2
+## Version: r3
 
 ## SavedVariables: OMM
 
