@@ -42,21 +42,9 @@ function frame:PLAYER_ENTERING_WORLD( ... )
 	hooksecurefunc("UIParent_ManageFramePositions", MoveLateFrames)
 end
 
-frame:SetPoint("TOP", MinimapCluster, "BOTTOM", 0, 5)
+frame:SetPoint("TOP", Minimap, "BOTTOM", 0, 5)
 frame.tex = frame:CreateTexture(nil, "BACKGROUND")
 frame.tex:SetAllPoints()
--- frame.tex:SetTexture("Interface\\ACHIEVEMENTFRAME\\UI-Achievement-Borders")
--- frame.tex:SetVertexColor(1, 1, 1, 0.6)
--- local insets = {
--- 	0.15039, -- ULx
--- 	0.19, -- ULy
--- 	0.15039, -- LLx
--- 	0, -- LLy
--- 	0.86719, -- URx,
--- 	0.19, -- URy
--- 	0.86719, -- LRx
--- 	0, -- LRy
--- }
 
 frame.tex:SetTexture("Interface\\QUESTFRAME\\ObjectiveTracker")
 local insets = {

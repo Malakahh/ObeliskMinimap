@@ -4,7 +4,7 @@ local frame = CreateFrame("FRAME", addonName .. "ZoneText", MinimapCluster)
 frame:SetScript("OnEvent", function(self, event, ... ) self[event](self, ...) end)
 frame:RegisterEvent("PLAYER_LOGIN")
 
-frame:SetPoint("TOP", 0, 10)
+frame:SetPoint("TOP", Minimap, "TOP", 0, 10)
 frame.tex = frame:CreateTexture(nil, "BACKGROUND")
 frame.tex:SetAllPoints()
 frame.tex:SetTexture("Interface\\Garrison\\GarrisonMissionUI2")
