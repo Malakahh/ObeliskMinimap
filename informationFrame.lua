@@ -17,7 +17,7 @@ local function MoveLateFrames( ... )
 end
 
 function frame:PLAYER_ENTERING_WORLD( ... )
-	self:SetSize(OMM.Minimap.Width + 10, 90)
+	self:SetSize(200, 90)
 
 	GarrisonLandingPageMinimapButton:SetParent(self)
 	GarrisonLandingPageMinimapButton:SetSize(28, 28)

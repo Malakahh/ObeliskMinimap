@@ -1,4 +1,4 @@
-local _, ns = ...
+local addonName, ns = ...
 
 MinimapCluster:SetScale(1)
 Minimap:SetScale(1)
@@ -6,6 +6,13 @@ Minimap:SetScale(1)
 local frame = CreateFrame("FRAME")
 frame:SetScript("OnEvent", function(self, event, ... ) self[event](self, ...) end)
 frame:RegisterEvent("PLAYER_LOGIN")
+
+-- Detach objective tracker
+ObjectiveTrackerFrame:SetMovable(true)
+ObjectiveTrackerFrame:SetUserPlaced(true)
+ObjectiveTrackerFrame:ClearAllPoints()
+ObjectiveTrackerFrame:SetParent(UIParent)
+ObjectiveTrackerFrame:SetPoint("TOPRIGHT", -OBJTRACKER_OFFSET_X, -MinimapCluster:GetHeight() - 80)
 
 function frame:PLAYER_LOGIN( ... )
 	ns.Options:RegisterForOkay(self.Initialize)
@@ -24,6 +31,7 @@ end
 function frame:Initialize()
 	Minimap:SetMaskTexture(ns.masks[OMM.Minimap.Mask])
 	Minimap:SetSize(OMM.Minimap.Width, OMM.Minimap.Height)
+	MinimapCluster:SetSize(OMM.Minimap.Width, OMM.Minimap.Height)
 	Minimap:ClearAllPoints()
 	Minimap:SetPoint("CENTER")
 
