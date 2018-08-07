@@ -2,7 +2,7 @@ local addonName, ns = ...
 
 local frame = CreateFrame("FRAME", addonName .. "InformationFrame", MinimapCluster)
 frame:SetScript("OnEvent", function(self, event, ... ) self[event](self, ...) end)
-frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+frame:RegisterEvent("PLAYER_LOGIN")
 
 local function MoveLateFrames( ... )
 	VehicleSeatIndicator:SetParent(frame)
@@ -16,8 +16,10 @@ local function MoveLateFrames( ... )
 	DurabilityFrame:SetFrameStrata("BACKGROUND")
 end
 
-function frame:PLAYER_ENTERING_WORLD( ... )
+function frame:PLAYER_LOGIN( ... )
 	self:SetSize(200, 90)
+	self:Place()
+	ns.Options:RegisterForOkay(self.Place)
 
 	GarrisonLandingPageMinimapButton:SetParent(self)
 	GarrisonLandingPageMinimapButton:SetSize(28, 28)
@@ -42,10 +44,7 @@ function frame:PLAYER_ENTERING_WORLD( ... )
 	hooksecurefunc("UIParent_ManageFramePositions", MoveLateFrames)
 end
 
-frame:SetPoint("TOP", Minimap, "BOTTOM", 0, 5)
 frame.tex = frame:CreateTexture(nil, "BACKGROUND")
-frame.tex:SetAllPoints()
-
 frame.tex:SetTexture("Interface\\QUESTFRAME\\ObjectiveTracker")
 local insets = {
 	0,
@@ -53,13 +52,12 @@ local insets = {
 	0,
 	0.16602
 }
-
 frame.tex:SetTexCoord(unpack(insets))
+frame.tex:SetAllPoints()
 
 frame.time = frame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 local fontName, fontHeight = frame.time:GetFont()
 frame.time:SetFont(fontName, fontHeight, "THINOUTLINE")
---frame.time:SetPoint("BOTTOM", 0, 5)
 frame.time:SetPoint("TOP", 0, -23)
 
 frame:SetScript("OnUpdate", function(self, ...)
@@ -69,13 +67,33 @@ end)
 frame.buttonCollectorToggle = CreateFrame("CheckButton", addonName .. "ButtonCollectorToggle", frame)
 frame.buttonCollectorToggle:SetSize(38, 38)
 frame.buttonCollectorToggle:SetPoint("TOPRIGHT", -10, -8)
-frame.buttonCollectorToggle:SetNormalTexture("Interface\\VEHICLES\\UI-VEHICLES-BUTTON-PITCHDOWN-UP")
-frame.buttonCollectorToggle:SetCheckedTexture("Interface\\VEHICLES\\UI-Vehicles-Button-Pitch-Down")
 frame.buttonCollectorToggle:SetScript("OnClick", function (self, btn, down)
 	if ns.ButtonCollectorDropdown:IsVisible() then
 		ns.ButtonCollectorDropdown:Hide()
 	else
-		ns.ButtonCollectorDropdown:SetPoint("TOP", frame, "TOP", 0, -47)
+		if OMM.InformationFrame.Placement == "Bottom" then
+			ns.ButtonCollectorDropdown:ClearAllPoints()
+			ns.ButtonCollectorDropdown:SetPoint("TOP", frame, "TOP", 0, -47)
+		elseif OMM.InformationFrame.Placement == "Top" then
+			ns.ButtonCollectorDropdown:ClearAllPoints()
+			ns.ButtonCollectorDropdown:SetPoint("BOTTOM", frame, "TOP", 0, -10)
+		end
 		ns.ButtonCollectorDropdown:Show()
 	end
 end)
+
+function frame:Place()
+	if OMM.InformationFrame.Placement == "Bottom" then
+		frame:ClearAllPoints()
+		frame:SetPoint("TOP", Minimap, "BOTTOM", 0, 5)
+
+		frame.buttonCollectorToggle:SetNormalTexture("Interface\\VEHICLES\\UI-VEHICLES-BUTTON-PITCHDOWN-UP")
+		frame.buttonCollectorToggle:SetCheckedTexture("Interface\\VEHICLES\\UI-Vehicles-Button-Pitch-Down")
+	elseif OMM.InformationFrame.Placement == "Top" then
+		frame:ClearAllPoints()
+		frame:SetPoint("BOTTOM", Minimap, "TOP", 0, -30)
+
+		frame.buttonCollectorToggle:SetCheckedTexture("Interface\\VEHICLES\\UI-VEHICLES-BUTTON-PITCHDOWN-UP")
+		frame.buttonCollectorToggle:SetNormalTexture("Interface\\VEHICLES\\UI-Vehicles-Button-Pitch-Down")
+	end
+end

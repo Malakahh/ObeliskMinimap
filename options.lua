@@ -23,6 +23,9 @@ local defaultSettings = {
 		Width = 190,
 		Height = 190,
 	},
+	InformationFrame = {
+		Placement = "Bottom",
+	},
 	ButtonCollector = {
 		NumColumns = 5,
 	},
@@ -47,6 +50,9 @@ local function onRefresh(self, ...)
 	self.minimapHeightEditBox:SetNumber(OMM.Minimap.Height)
 	self.minimapHeightEditBox:SetCursorPosition(0)
 
+	-- Information Frame
+	UIDropDownMenu_SetText(self.informationFramePlacementDropdown, OMM.InformationFrame.Placement)
+
 	-- Button Collector
 	self.buttonCollectorNumColumnsEditBox:SetNumber(OMM.ButtonCollector.NumColumns)
 	self.buttonCollectorNumColumnsEditBox:SetCursorPosition(0)
@@ -58,6 +64,9 @@ local function onOkay(self, ...)
 
 	OMM.Minimap.Width = self.minimapWidthEditBox:GetNumber()
 	OMM.Minimap.Height = self.minimapHeightEditBox:GetNumber()
+
+	-- Information Frame
+	OMM.InformationFrame.Placement = UIDropDownMenu_GetText(self.informationFramePlacementDropdown)
 
 	-- Button Collector
 	OMM.ButtonCollector.NumColumns = self.buttonCollectorNumColumnsEditBox:GetNumber()
@@ -109,23 +118,24 @@ panel.minimapMaskPreview.tex = panel.minimapMaskPreview:CreateTexture(nil, "BACK
 panel.minimapMaskPreview.tex:SetAllPoints()
 panel.minimapMaskPreview.tex:SetColorTexture(0, 1, 0, 0.5)
 
-local function dropdownOnClick(self, selectedMask, arg2, checked)
+local function minimapMaskDropdownOnClick(self, selectedMask, arg2, checked)
 	UIDropDownMenu_SetText(panel.minimapMaskDropdown, selectedMask)
 	panel.minimapMaskPreview.tex:SetTexture(ns.masks[selectedMask])
 	CloseDropDownMenus()
 end
 
-local function dropdownInitialization(self, level, menuList)
+local function minimapMaskDropdownInitialization(self, level, menuList)
 	local info = UIDropDownMenu_CreateInfo()
 	for k,v in pairs(ns.masks) do	
 		info.text = k
 		info.arg1 = k
-		info.func = dropdownOnClick
+		info.func = minimapMaskDropdownOnClick
+		info.checked = UIDropDownMenu_GetText(panel.minimapMaskDropdown) == k
 		UIDropDownMenu_AddButton(info)
 	end
 end
 
-UIDropDownMenu_Initialize(panel.minimapMaskDropdown, dropdownInitialization)
+UIDropDownMenu_Initialize(panel.minimapMaskDropdown, minimapMaskDropdownInitialization)
 
 -- Minimap size
 panel.minimapWidthText = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
@@ -152,9 +162,40 @@ panel.minimapHeightEditBox:SetTextInsets(2, 2, 2, 0)
 panel.minimapHeightEditBox:SetNumeric(true)
 panel.minimapHeightEditBox:ClearFocus()
 
+-- Bar Placement
+panel.informationFrameTitle = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+panel.informationFrameTitle:SetPoint("TOPLEFT", panel.minimapWidthEditBox, "BOTTOMLEFT", -margin - editBoxIndent, -endOfSectionSpacing)
+panel.informationFrameTitle:SetText("Information Frame Placement")
+
+panel.informationFramePlacementDropdown = CreateFrame("FRAME", addonName .. "OptionsInformationFramePlacementDropdown", panel, "UIDropDownMenuTemplate")
+panel.informationFramePlacementDropdown:SetPoint("TOPLEFT", panel.informationFrameTitle, "BOTTOMLEFT", 0, -itemSpacing)
+
+local function informationFramePlacementDropdownOnClick(self, selected, arg2, checked)
+	UIDropDownMenu_SetText(panel.informationFramePlacementDropdown, selected)
+	CloseDropDownMenus()
+end
+
+local function informationFramePlacementDropdownInitialization(self, level, menuList)
+	local info = UIDropDownMenu_CreateInfo()
+	local t = {
+		"Bottom",
+		"Top",
+	}
+
+	for k,v in pairs(t) do	
+		info.text = v
+		info.arg1 = v
+		info.func = informationFramePlacementDropdownOnClick
+		info.checked = UIDropDownMenu_GetText(panel.informationFramePlacementDropdown) == v
+		UIDropDownMenu_AddButton(info)
+	end
+end
+
+UIDropDownMenu_Initialize(panel.informationFramePlacementDropdown, informationFramePlacementDropdownInitialization)
+
 -- Button collector num columns
 panel.buttonCollectorTitle = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-panel.buttonCollectorTitle:SetPoint("TOPLEFT", panel.minimapWidthEditBox, "BOTTOMLEFT", -margin - editBoxIndent, -endOfSectionSpacing)
+panel.buttonCollectorTitle:SetPoint("TOPLEFT", panel.informationFramePlacementDropdown, "BOTTOMLEFT", 0, -endOfSectionSpacing)
 panel.buttonCollectorTitle:SetText("Button Collector")
 
 panel.buttonCollectorNumColumnsText = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
@@ -168,6 +209,3 @@ panel.buttonCollectorNumColumnsEditBox:SetAutoFocus(false)
 panel.buttonCollectorNumColumnsEditBox:SetTextInsets(2, 2, 2, 0)
 panel.buttonCollectorNumColumnsEditBox:SetNumeric(true)
 panel.buttonCollectorNumColumnsEditBox:ClearFocus()
-
-
-
