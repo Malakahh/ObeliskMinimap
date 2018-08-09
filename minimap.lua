@@ -23,6 +23,7 @@ end
 function frame:Initialize()
 	Minimap:SetMaskTexture(ns.masks[OMM.Minimap.Mask])
 	Minimap:SetSize(OMM.Minimap.Width, OMM.Minimap.Height)
+	MinimapCluster:SetSize(OMM.Minimap.Width, OMM.Minimap.Height + 50)
 	MinimapNorthTag:SetPoint("TOP", Minimap, "TOP", 0, -20)
 
 	if OMM.Minimap.Pos then

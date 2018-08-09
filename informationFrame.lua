@@ -6,19 +6,16 @@ frame:RegisterEvent("PLAYER_LOGIN")
 
 local function MoveLateFrames( ... )
 	VehicleSeatIndicator:SetParent(frame)
-	VehicleSeatIndicator:ClearAllPoints()
-	VehicleSeatIndicator:SetPoint("TOPRIGHT", 0, -50)
 	VehicleSeatIndicator:SetFrameStrata("BACKGROUND")
 
 	DurabilityFrame:SetParent(frame)
-	DurabilityFrame:ClearAllPoints()
-	DurabilityFrame:SetPoint("TOPRIGHT", -35, -50)
 	DurabilityFrame:SetFrameStrata("BACKGROUND")
+
+	frame:Place()
 end
 
 function frame:PLAYER_LOGIN( ... )
 	self:SetSize(200, 90)
-	self:Place()
 	ns.Options:RegisterForOkay(self.Place)
 
 	GarrisonLandingPageMinimapButton:SetParent(self)
@@ -55,19 +52,58 @@ local insets = {
 frame.tex:SetTexCoord(unpack(insets))
 frame.tex:SetAllPoints()
 
-frame.time = frame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-local fontName, fontHeight = frame.time:GetFont()
-frame.time:SetFont(fontName, fontHeight, "THINOUTLINE")
+frame.time = CreateFrame("BUTTON", "MYFRAMELOL", frame)
+frame.time:SetSize(100,100)
 frame.time:SetPoint("TOP", 0, -23)
+frame.time:SetScript("OnClick", function(self, btn, down)
+	if TimeManagerFrame:IsVisible() then
+		TimeManagerFrame:Hide()
+	else
+		if OMM.InformationFrame.Placement == "Bottom" then
+			TimeManagerFrame:ClearAllPoints()
+			TimeManagerFrame:SetPoint("TOP", frame, "TOP", 0, -60)
+		elseif OMM.InformationFrame.Placement == "Top" then
+			TimeManagerFrame:ClearAllPoints()
+			TimeManagerFrame:SetPoint("BOTTOM", frame, "BOTTOM", 0, 82)
+		end
 
-frame:SetScript("OnUpdate", function(self, ...)
-	self.time:SetText(GameTime_GetTime(false))
+		TimeManagerFrame:Show()
+	end
 end)
+
+frame.time.timeText = frame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+local fontName, fontHeight = frame.time.timeText:GetFont()
+frame.time.timeText:SetFont(fontName, fontHeight, "THINOUTLINE")
+frame.time.timeText:SetPoint("TOP", 0, -23)
+
+frame.time:SetScript("OnUpdate", function(self, ...)
+	self.timeText:SetText(GameTime_GetTime(false))
+	self:SetSize(self.timeText:GetStringWidth(), self.timeText:GetStringHeight())
+end)
+
+local function FlipCollectorToggleTexture()
+	if OMM.InformationFrame.Placement == "Bottom" then
+		if frame.buttonCollectorToggle:GetChecked() then
+			frame.buttonCollectorToggle:SetNormalTexture("Interface\\VEHICLES\\UI-Vehicles-Button-Pitch-Down")
+		else
+			frame.buttonCollectorToggle:SetNormalTexture("Interface\\VEHICLES\\UI-VEHICLES-BUTTON-PITCHDOWN-UP")
+		end
+	elseif OMM.InformationFrame.Placement == "Top" then
+		if frame.buttonCollectorToggle:GetChecked() then
+			--frame.buttonCollectorToggle:SetNormalTexture("Interface\\VEHICLES\\UI-VEHICLES-BUTTON-PITCHDOWN-UP")
+			frame.buttonCollectorToggle:SetNormalTexture("Interface\\VEHICLES\\UI-VEHICLES-BUTTON-PITCHDOWN-DOWN")
+		else
+			frame.buttonCollectorToggle:SetNormalTexture("Interface\\VEHICLES\\UI-Vehicles-Button-Pitch-Up")
+		end
+	end
+end
 
 frame.buttonCollectorToggle = CreateFrame("CheckButton", addonName .. "ButtonCollectorToggle", frame)
 frame.buttonCollectorToggle:SetSize(38, 38)
 frame.buttonCollectorToggle:SetPoint("TOPRIGHT", -10, -8)
 frame.buttonCollectorToggle:SetScript("OnClick", function (self, btn, down)
+	FlipCollectorToggleTexture()
+
 	if ns.ButtonCollectorDropdown:IsVisible() then
 		ns.ButtonCollectorDropdown:Hide()
 	else
@@ -87,13 +123,21 @@ function frame:Place()
 		frame:ClearAllPoints()
 		frame:SetPoint("TOP", Minimap, "BOTTOM", 0, 5)
 
-		frame.buttonCollectorToggle:SetNormalTexture("Interface\\VEHICLES\\UI-VEHICLES-BUTTON-PITCHDOWN-UP")
-		frame.buttonCollectorToggle:SetCheckedTexture("Interface\\VEHICLES\\UI-Vehicles-Button-Pitch-Down")
+		VehicleSeatIndicator:ClearAllPoints()
+		VehicleSeatIndicator:SetPoint("TOPRIGHT", 0, -50)
+
+		DurabilityFrame:ClearAllPoints()
+		DurabilityFrame:SetPoint("TOPRIGHT", -35, -50)
 	elseif OMM.InformationFrame.Placement == "Top" then
 		frame:ClearAllPoints()
 		frame:SetPoint("BOTTOM", Minimap, "TOP", 0, -30)
 
-		frame.buttonCollectorToggle:SetCheckedTexture("Interface\\VEHICLES\\UI-VEHICLES-BUTTON-PITCHDOWN-UP")
-		frame.buttonCollectorToggle:SetNormalTexture("Interface\\VEHICLES\\UI-Vehicles-Button-Pitch-Down")
+		VehicleSeatIndicator:ClearAllPoints()
+		VehicleSeatIndicator:SetPoint("BOTTOMRIGHT", 0, 80)
+
+		DurabilityFrame:ClearAllPoints()
+		DurabilityFrame:SetPoint("BOTTOMRIGHT", -35, 80)
 	end
+
+	FlipCollectorToggleTexture()
 end
