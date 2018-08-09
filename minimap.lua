@@ -20,16 +20,24 @@ function frame:PLAYER_LOGIN( ... )
 	Minimap:SetClampedToScreen(true)
 end
 
+local function MoveLateFrames( ... )
+	if not ObjectiveTrackerFrame:IsUserPlaced() then
+		ObjectiveTrackerFrame:ClearAllPoints();
+		ObjectiveTrackerFrame:SetPoint("TOPRIGHT", MinimapCluster, "BOTTOMLEFT", 0, 0)
+	end
+end
+
 function frame:Initialize()
 	Minimap:SetMaskTexture(ns.masks[OMM.Minimap.Mask])
 	Minimap:SetSize(OMM.Minimap.Width, OMM.Minimap.Height)
-	MinimapCluster:SetSize(OMM.Minimap.Width, OMM.Minimap.Height + 50)
 	MinimapNorthTag:SetPoint("TOP", Minimap, "TOP", 0, -20)
 
 	if OMM.Minimap.Pos then
 		Minimap:ClearAllPoints()
 		Minimap:SetPoint(unpack(OMM.Minimap.Pos))
 	end
+
+	hooksecurefunc("UIParent_ManageFramePositions", MoveLateFrames)
 end
 
 -- Scroll zoom
