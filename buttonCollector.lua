@@ -66,6 +66,7 @@ ns.ButtonCollectorDropdown.gridView.CollectedButtons = {}
 local Includes = {
 	--GarrisonLandingPageMinimapButton = true, 
 	MiniMapTracking = true,
+	--PerlButton = true,
 }
 
 local Excludes = {
