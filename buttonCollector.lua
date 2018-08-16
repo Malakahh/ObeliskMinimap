@@ -66,7 +66,11 @@ ns.ButtonCollectorDropdown.gridView.CollectedButtons = {}
 local Includes = {
 	--GarrisonLandingPageMinimapButton = true, 
 	MiniMapTracking = true,
-	--PerlButton = true,
+
+	---------
+	-- Third party addons doing things weirdly
+	---------
+	PerlButton = true,
 }
 
 local Excludes = {
@@ -75,8 +79,12 @@ local Excludes = {
 	MiniMapMailFrame = true,
 	MiniMapVoiceChatFrame = true,
 	--GameTimeFrame = true,
-	--DBMMinimapButton = true,
 	TimeManagerClockButton = true,
+
+	---------
+	-- Third party addons doing things weirdly
+	---------
+	Perl_Config_ButtonFrame = true,
 }
 
 local function IsExcluded(val)
@@ -103,8 +111,11 @@ function ns.ButtonCollectorDropdown.gridView:Initialize()
 end
 
 function ns.ButtonCollectorDropdown.gridView:CollectButtons( ... )
-	for k, _ in pairs(Includes) do
-		self:AddItem(_G[k])
+	for k,_ in pairs(Includes) do
+		local item = _G[k]
+		if item ~= nil then
+			self:AddItem(item)
+		end
 	end
 
 	for k,v in pairs({Minimap:GetChildren()}) do

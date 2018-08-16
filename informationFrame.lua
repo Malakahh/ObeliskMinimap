@@ -52,7 +52,7 @@ local insets = {
 frame.tex:SetTexCoord(unpack(insets))
 frame.tex:SetAllPoints()
 
-frame.time = CreateFrame("BUTTON", "MYFRAMELOL", frame)
+frame.time = CreateFrame("BUTTON", nil, frame)
 frame.time:SetSize(100,100)
 frame.time:SetPoint("TOP", 0, -23)
 frame.time:SetScript("OnClick", function(self, btn, down)
@@ -90,7 +90,6 @@ local function FlipCollectorToggleTexture()
 		end
 	elseif OMM.InformationFrame.Placement == "Top" then
 		if frame.buttonCollectorToggle:GetChecked() then
-			--frame.buttonCollectorToggle:SetNormalTexture("Interface\\VEHICLES\\UI-VEHICLES-BUTTON-PITCHDOWN-UP")
 			frame.buttonCollectorToggle:SetNormalTexture("Interface\\VEHICLES\\UI-VEHICLES-BUTTON-PITCHDOWN-DOWN")
 		else
 			frame.buttonCollectorToggle:SetNormalTexture("Interface\\VEHICLES\\UI-Vehicles-Button-Pitch-Up")
