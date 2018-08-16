@@ -22,7 +22,7 @@ end
 
 local function MoveLateFrames( ... )
 	if not ObjectiveTrackerFrame:IsUserPlaced() then
-		ObjectiveTrackerFrame:SetPoint("TOPRIGHT", addonName .. "InformationFrame", "TOPLEFT", 0, -16)
+		ObjectiveTrackerFrame:SetPoint("TOPRIGHT", MinimapCluster, "BOTTOMLEFT", 0, 0)
 	end
 end
 
