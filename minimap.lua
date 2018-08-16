@@ -22,7 +22,6 @@ end
 
 local function MoveLateFrames( ... )
 	if not ObjectiveTrackerFrame:IsUserPlaced() then
-		ObjectiveTrackerFrame:ClearAllPoints();
 		ObjectiveTrackerFrame:SetPoint("TOPRIGHT", MinimapCluster, "BOTTOMLEFT", 0, 0)
 	end
 end
