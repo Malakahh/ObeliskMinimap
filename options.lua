@@ -20,8 +20,7 @@ ns.masks = {
 local defaultSettings = {
 	Minimap = {
 		Mask = "torn1",
-		Width = 190,
-		Height = 190,
+		Size = 190,
 	},
 	InformationFrame = {
 		Placement = "Bottom",
@@ -44,11 +43,8 @@ local function onRefresh(self, ...)
 	-- Minimap
 	UIDropDownMenu_SetText(self.minimapMaskDropdown, OMM.Minimap.Mask)
 	self.minimapMaskPreview.tex:SetTexture(ns.masks[OMM.Minimap.Mask])
-
-	self.minimapWidthEditBox:SetNumber(OMM.Minimap.Width)
-	self.minimapWidthEditBox:SetCursorPosition(0)
-	self.minimapHeightEditBox:SetNumber(OMM.Minimap.Height)
-	self.minimapHeightEditBox:SetCursorPosition(0)
+	self.minimapSizeEditBox:SetNumber(OMM.Minimap.Size)
+	self.minimapSizeEditBox:SetCursorPosition(0)
 
 	-- Information Frame
 	UIDropDownMenu_SetText(self.informationFramePlacementDropdown, OMM.InformationFrame.Placement)
@@ -61,9 +57,7 @@ end
 local function onOkay(self, ...)
 	-- Minimap
 	OMM.Minimap.Mask = UIDropDownMenu_GetText(self.minimapMaskDropdown)
-
-	OMM.Minimap.Width = self.minimapWidthEditBox:GetNumber()
-	OMM.Minimap.Height = self.minimapHeightEditBox:GetNumber()
+	OMM.Minimap.Size = self.minimapSizeEditBox:GetNumber()
 
 	-- Information Frame
 	OMM.InformationFrame.Placement = UIDropDownMenu_GetText(self.informationFramePlacementDropdown)
@@ -138,33 +132,21 @@ end
 UIDropDownMenu_Initialize(panel.minimapMaskDropdown, minimapMaskDropdownInitialization)
 
 -- Minimap size
-panel.minimapWidthText = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-panel.minimapWidthText:SetPoint("TOPLEFT", panel.minimapMaskDropdown, "BOTTOMLEFT", margin, -itemSpacing - panel.minimapMaskPreview:GetHeight())
-panel.minimapWidthText:SetText("Width:")
+panel.minimapScaleText = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+panel.minimapScaleText:SetPoint("TOPLEFT", panel.minimapMaskDropdown, "BOTTOMLEFT", margin, -itemSpacing - panel.minimapMaskPreview:GetHeight())
+panel.minimapScaleText:SetText("Size:")
 
-panel.minimapWidthEditBox = CreateFrame("EditBox", nil, panel, "InputBoxTemplate")
-panel.minimapWidthEditBox:SetPoint("TOPLEFT", panel.minimapWidthText, "BOTTOMLEFT", editBoxIndent, -belowTextSpacing)
-panel.minimapWidthEditBox:SetSize(80, 22)
-panel.minimapWidthEditBox:SetAutoFocus(false)
-panel.minimapWidthEditBox:SetTextInsets(2, 2, 2, 0)
-panel.minimapWidthEditBox:SetNumeric(true)
-panel.minimapWidthEditBox:ClearFocus()
-
-panel.minimapHeightText = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-panel.minimapHeightText:SetPoint("LEFT", panel.minimapWidthText, "RIGHT", panel.minimapWidthEditBox:GetWidth() + itemSpacing, 0)
-panel.minimapHeightText:SetText("Height:")
-
-panel.minimapHeightEditBox = CreateFrame("EditBox", nil, panel, "InputBoxTemplate")
-panel.minimapHeightEditBox:SetPoint("TOPLEFT", panel.minimapHeightText, "BOTTOMLEFT", editBoxIndent, -belowTextSpacing)
-panel.minimapHeightEditBox:SetSize(80, 22)
-panel.minimapHeightEditBox:SetAutoFocus(false)
-panel.minimapHeightEditBox:SetTextInsets(2, 2, 2, 0)
-panel.minimapHeightEditBox:SetNumeric(true)
-panel.minimapHeightEditBox:ClearFocus()
+panel.minimapSizeEditBox = CreateFrame("EditBox", nil, panel, "InputBoxTemplate")
+panel.minimapSizeEditBox:SetPoint("TOPLEFT", panel.minimapScaleText, "BOTTOMLEFT", editBoxIndent, -belowTextSpacing)
+panel.minimapSizeEditBox:SetSize(80, 22)
+panel.minimapSizeEditBox:SetAutoFocus(false)
+panel.minimapSizeEditBox:SetTextInsets(2, 2, 2, 0)
+panel.minimapSizeEditBox:SetNumeric(true)
+panel.minimapSizeEditBox:ClearFocus()
 
 -- Bar Placement
 panel.informationFrameTitle = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-panel.informationFrameTitle:SetPoint("TOPLEFT", panel.minimapWidthEditBox, "BOTTOMLEFT", -margin - editBoxIndent, -endOfSectionSpacing)
+panel.informationFrameTitle:SetPoint("TOPLEFT", panel.minimapSizeEditBox, "BOTTOMLEFT", -margin - editBoxIndent, -endOfSectionSpacing)
 panel.informationFrameTitle:SetText("Information Frame Placement")
 
 panel.informationFramePlacementDropdown = CreateFrame("FRAME", addonName .. "OptionsInformationFramePlacementDropdown", panel, "UIDropDownMenuTemplate")

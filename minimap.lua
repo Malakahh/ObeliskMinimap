@@ -22,13 +22,13 @@ end
 
 local function MoveLateFrames( ... )
 	if not ObjectiveTrackerFrame:IsUserPlaced() then
-		ObjectiveTrackerFrame:SetPoint("TOPRIGHT", MinimapCluster, "BOTTOMLEFT", 0, 0)
+		ObjectiveTrackerFrame:SetPoint("TOPRIGHT", addonName .. "InformationFrame", "TOPLEFT", 0, -16)
 	end
 end
 
 function frame:Initialize()
 	Minimap:SetMaskTexture(ns.masks[OMM.Minimap.Mask])
-	Minimap:SetSize(OMM.Minimap.Width, OMM.Minimap.Height)
+	Minimap:SetSize(OMM.Minimap.Size, OMM.Minimap.Size)
 	MinimapNorthTag:SetPoint("TOP", Minimap, "TOP", 0, -20)
 
 	if OMM.Minimap.Pos then

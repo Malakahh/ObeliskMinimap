@@ -19,9 +19,9 @@ function frame:PLAYER_LOGIN( ... )
 	ns.Options:RegisterForOkay(self.Place)
 
 	GarrisonLandingPageMinimapButton:SetParent(self)
-	GarrisonLandingPageMinimapButton:SetSize(28, 28)
 	GarrisonLandingPageMinimapButton:ClearAllPoints()
 	GarrisonLandingPageMinimapButton:SetPoint("TOPLEFT", 15, -15)
+	GarrisonLandingPageMinimapButton:SetPoint("BOTTOMRIGHT", self, "TOPLEFT", 43, -43)
 
 	QueueStatusMinimapButton:SetParent(self)
 	QueueStatusMinimapButton:SetSize(33, 33)
