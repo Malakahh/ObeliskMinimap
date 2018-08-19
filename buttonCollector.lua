@@ -35,7 +35,13 @@ local onFirstUpdate = true
 local function OnUpdate(self, ... )
 	local x,y
 	if not onFirstUpdate then
-		x,y = C_Map.GetPlayerMapPosition(C_Map.GetBestMapForUnit("player"), "player"):GetXY()
+		local mapID = C_Map.GetBestMapForUnit("player")
+		if mapID then
+			local playerMapPosition = C_Map.GetPlayerMapPosition(mapID, "player")
+			if playerMapPosition then
+				x,y = playerMapPosition:GetXY()
+			end
+		end
 	end
 
 	if x ~= nil and y ~= nil then
