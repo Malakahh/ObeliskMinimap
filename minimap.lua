@@ -33,7 +33,9 @@ function frame:Initialize()
 
 	if OMM.Minimap.Pos then
 		Minimap:ClearAllPoints()
-		Minimap:SetPoint(unpack(OMM.Minimap.Pos))
+		local pos = OMM.Minimap.Pos
+		pos[2] = UIParent
+		Minimap:SetPoint(unpack(pos))
 	end
 
 	hooksecurefunc("UIParent_ManageFramePositions", MoveLateFrames)
