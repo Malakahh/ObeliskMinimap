@@ -2,7 +2,12 @@ local addonName, ns = ...
 
 local libGridView = ObeliskFrameworkManager:GetLibrary("ObeliskGridView", 1)
 if not libGridView then
-	print("libGridView not gotten")
+	print("Unable to load ObeliskGridView")
+end
+
+local libVersionUnification = ObeliskFrameworkManager:GetLibrary("ObeliskVersionUnification", 0)
+if not libVersionUnification then
+	print("Unable to load ObeliskVersionUnification")
 end
 
 local cellSize = 32
@@ -21,8 +26,17 @@ ns.ButtonCollectorDropdown:SetBackdropColor(0, 0, 0, 1)
 ns.ButtonCollectorDropdown:SetClampedToScreen(true)
 ns.ButtonCollectorDropdown:Hide()
 
+-- Instance difficulty
+if libVersionUnification.IsRetail then
+	MiniMapInstanceDifficulty:SetParent(ns.ButtonCollectorDropdown)
+	MiniMapInstanceDifficulty:ClearAllPoints()
+	MiniMapInstanceDifficulty:SetPoint("TOPLEFT", -40, 37)
+	MiniMapChallengeMode:SetParent(ns.ButtonCollectorDropdown)
+	MiniMapChallengeMode:ClearAllPoints()
+	MiniMapChallengeMode:SetPoint("TOPLEFT", -40, 37)
+end
 
---Coordinates
+-- Coordinates
 local coordnateOffset = 10
 
 ns.ButtonCollectorDropdown.coordinates = ns.ButtonCollectorDropdown:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -91,6 +105,29 @@ local Excludes = {
 	-- Third party addons doing things weirdly
 	---------
 	Perl_Config_ButtonFrame = true,
+	EnxMiniMapIcon = true,
+	TrinketMenu_IconFrame = true,
+	QuestieFrameGroup = true,
+}
+
+local SpecialCase = {
+	EnxMiniMapIcon = function()
+		ns.ButtonCollectorDropdown.gridView:HandleButton(EnxMiniMapIcon)
+		EnxMiniMapIcon.icon:ClearAllPoints()
+		EnxMiniMapIcon.icon:SetPoint("CENTER")
+		EnxMiniMapIcon.mask:ClearAllPoints()
+		EnxMiniMapIcon.mask:SetPoint("CENTER")
+		EnxMiniMapIcon.mask:SetSize(cellSize, cellSize)
+	end,
+	TrinketMenu_IconFrame = function()
+		ns.ButtonCollectorDropdown.gridView:HandleButton(TrinketMenu_IconFrame)
+		
+		local old = TrinketMenu.MoveMinimapButton
+		TrinketMenu.MoveMinimapButton = function()
+			old()
+			ns.ButtonCollectorDropdown.gridView:Update()
+		end
+	end
 }
 
 local function IsExcluded(val)
@@ -101,6 +138,21 @@ local function IsExcluded(val)
 		return Excludes[val:GetName()] or false
 	else
 		return false
+	end
+end
+
+local function HandleSpecialCase(val)
+	local t = type(val)
+	local func = nil
+
+	if t == "string" then
+		func = SpecialCase[val]
+	elseif t == "table" and val.GetName ~= nil then
+		func = SpecialCase[val:GetName()]
+	end
+
+	if func ~= nil then
+		func()
 	end
 end
 
@@ -120,17 +172,26 @@ function ns.ButtonCollectorDropdown.gridView:CollectButtons( ... )
 	for k,_ in pairs(Includes) do
 		local item = _G[k]
 		if item ~= nil then
-			self:AddItem(item)
+			-- item:SetSize(cellSize, cellSize)
+			-- self:AddItem(item)
+			self:HandleButton(item)
 		end
 	end
 
 	for k,v in pairs({Minimap:GetChildren()}) do
-		if not IsExcluded(v) then
-			v:SetSize(cellSize, cellSize)
-			self:AddItem(v)
-			v:Show()
+		if not IsExcluded(v) and v:IsVisible() then
+			-- v:SetSize(cellSize, cellSize)
+			-- self:AddItem(v)
+			self:HandleButton(v)
 		end
+
+		HandleSpecialCase(v)
 	end
+end
+
+function ns.ButtonCollectorDropdown.gridView:HandleButton(btn)
+	btn:SetSize(cellSize, cellSize)
+	self:AddItem(btn)
 end
 
 function ns.ButtonCollectorDropdown.gridView:AdjustSize()

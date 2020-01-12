@@ -1,12 +1,17 @@
 local addonName, ns = ...
 
+local libVersionUnification = ObeliskFrameworkManager:GetLibrary("ObeliskVersionUnification", 0)
+if not libVersionUnification then
+	print("Unable to load ObeliskVersionUnification")
+end
+
 Minimap:SetScale(1)
 
 local frame = CreateFrame("FRAME")
 frame:SetScript("OnEvent", function(self, event, ... ) self[event](self, ...) end)
-frame:RegisterEvent("PLAYER_LOGIN")
+frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-function frame:PLAYER_LOGIN( ... )
+function frame:PLAYER_ENTERING_WORLD( ... )
 	ns.Options:RegisterForOkay(self.Initialize)
 	self:Initialize()	
 
@@ -20,9 +25,15 @@ function frame:PLAYER_LOGIN( ... )
 	Minimap:SetClampedToScreen(true)
 end
 
-local function MoveLateFrames( ... )
-	if not ObjectiveTrackerFrame:IsUserPlaced() then
-		ObjectiveTrackerFrame:SetPoint("TOPRIGHT", MinimapCluster, "BOTTOMLEFT", 0, 0)
+local function MoveLateFrames()
+	if libVersionUnification.IsRetail then
+		if not ObjectiveTrackerFrame:IsUserPlaced() then
+			ObjectiveTrackerFrame:SetPoint("TOPRIGHT", MinimapCluster, "BOTTOMLEFT", 0, 0)
+		end
+	elseif libVersionUnification.IsClassic then
+		if not QuestWatchFrame:IsUserPlaced() then
+			QuestWatchFrame:SetPoint("TOPRIGHT", MinimapCluster, "BOTTOMLEFT", 0, 0)
+		end
 	end
 end
 

@@ -1,0 +1,9 @@
+r13
+-	Updated to support Classic and Retail
+-	Added Questie and TinketMenu special cases for button collector
+
+r12
+-	Changed the way minimap buttons are collected. Hidden icons are no longer connected. If they are suddenly shown, do a /reload to collect them.
+
+r11
+-	Placed InstanceDifficulty frame to the left of InformationFrame. Its visibility is toggled by the dropdown. I'd love some feedback on this solution.
