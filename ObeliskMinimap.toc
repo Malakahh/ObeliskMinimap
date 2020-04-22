@@ -2,7 +2,7 @@
 ## Title: |cFFDDCF99Obelisk|r Minimap
 ## Author: Malakahh
 ## Notes: A clean minimap featuring coordinates, and masking. It also collects and stores minimap buttons
-## Version: r12
+## Version: r13
 
 ## SavedVariables: OMM
 

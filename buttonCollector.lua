@@ -106,6 +106,8 @@ local Excludes = {
 	---------
 	Perl_Config_ButtonFrame = true,
 	EnxMiniMapIcon = true,
+	TrinketMenu_IconFrame = true,
+	QuestieFrameGroup = true,
 }
 
 local SpecialCase = {
@@ -116,6 +118,15 @@ local SpecialCase = {
 		EnxMiniMapIcon.mask:ClearAllPoints()
 		EnxMiniMapIcon.mask:SetPoint("CENTER")
 		EnxMiniMapIcon.mask:SetSize(cellSize, cellSize)
+	end,
+	TrinketMenu_IconFrame = function()
+		ns.ButtonCollectorDropdown.gridView:HandleButton(TrinketMenu_IconFrame)
+		
+		local old = TrinketMenu.MoveMinimapButton
+		TrinketMenu.MoveMinimapButton = function()
+			old()
+			ns.ButtonCollectorDropdown.gridView:Update()
+		end
 	end
 }
 
