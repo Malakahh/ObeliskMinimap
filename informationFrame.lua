@@ -1,12 +1,19 @@
 local addonName, ns = ...
 
+local libVersionUnification = ObeliskFrameworkManager:GetLibrary("ObeliskVersionUnification", 0)
+if not libVersionUnification then
+	print("Unable to load ObeliskVersionUnification")
+end
+
 local frame = CreateFrame("FRAME", addonName .. "InformationFrame", MinimapCluster)
 frame:SetScript("OnEvent", function(self, event, ... ) self[event](self, ...) end)
 frame:RegisterEvent("PLAYER_LOGIN")
 
-local function MoveLateFrames( ... )
-	VehicleSeatIndicator:SetParent(frame)
-	VehicleSeatIndicator:SetFrameStrata("BACKGROUND")
+local function MoveLateFrames()
+	if libVersionUnification.IsRetail then
+		VehicleSeatIndicator:SetParent(frame)
+		VehicleSeatIndicator:SetFrameStrata("BACKGROUND")
+	end
 
 	DurabilityFrame:SetParent(frame)
 	DurabilityFrame:SetFrameStrata("BACKGROUND")
@@ -18,17 +25,22 @@ function frame:PLAYER_LOGIN( ... )
 	self:SetSize(200, 90)
 	ns.Options:RegisterForOkay(self.Place)
 
-	GarrisonLandingPageMinimapButton:SetParent(self)
-	GarrisonLandingPageMinimapButton:ClearAllPoints()
-	GarrisonLandingPageMinimapButton:SetPoint("TOPLEFT", 15, -15)
-	GarrisonLandingPageMinimapButton:SetPoint("BOTTOMRIGHT", self, "TOPLEFT", 43, -43)
+	if libVersionUnification.IsRetail then
+		GarrisonLandingPageMinimapButton:SetParent(self)
+		GarrisonLandingPageMinimapButton:ClearAllPoints()
+		GarrisonLandingPageMinimapButton:SetPoint("TOPLEFT", 15, -15)
+		GarrisonLandingPageMinimapButton:SetPoint("BOTTOMRIGHT", self, "TOPLEFT", 43, -43)
 
-	QueueStatusMinimapButton:SetParent(self)
-	QueueStatusMinimapButton:SetSize(33, 33)
-	QueueStatusMinimapButton:ClearAllPoints()
-	QueueStatusMinimapButton:SetPoint("TOPLEFT", 41, -12)
-	QueueStatusMinimapButtonBorder:Hide()
-	QueueStatusMinimapButtonIcon:SetSize(QueueStatusMinimapButton:GetSize())
+		QueueStatusMinimapButton:SetParent(self)
+		QueueStatusMinimapButton:SetSize(33, 33)
+		QueueStatusMinimapButton:ClearAllPoints()
+		QueueStatusMinimapButton:SetPoint("TOPLEFT", 41, -12)
+		QueueStatusMinimapButtonBorder:Hide()
+		QueueStatusMinimapButtonIcon:SetSize(QueueStatusMinimapButton:GetSize())
+	elseif libVersionUnification.IsClassic then
+		MinimapToggleButton:Hide()
+		GameTimeFrame:Hide()
+	end
 
 	MiniMapMailFrame:SetParent(self)
 	MiniMapMailFrame:SetSize(20, 20)
@@ -43,13 +55,24 @@ end
 
 frame.tex = frame:CreateTexture(nil, "BACKGROUND")
 frame.tex:SetTexture("Interface\\QUESTFRAME\\ObjectiveTracker")
-local insets = {
-	0,
-	0.57813,
-	0,
-	0.16602
-}
-frame.tex:SetTexCoord(unpack(insets))
+
+if libVersionUnification.IsRetail then
+	local insets = {
+		0,
+		0.57813,
+		0,
+		0.16602
+	}
+	frame.tex:SetTexCoord(unpack(insets))
+elseif libVersionUnification.IsClassic then
+	local insets = {
+		0,
+		0.57813,
+		0,
+		0.16602 * 2
+	}
+	frame.tex:SetTexCoord(unpack(insets))
+end
 frame.tex:SetAllPoints()
 
 frame.time = CreateFrame("BUTTON", nil, frame)
@@ -122,8 +145,10 @@ function frame:Place()
 		frame:ClearAllPoints()
 		frame:SetPoint("TOP", Minimap, "BOTTOM", 0, 5)
 
-		VehicleSeatIndicator:ClearAllPoints()
-		VehicleSeatIndicator:SetPoint("TOPRIGHT", 0, -50)
+		if libVersionUnification.IsRetail then
+			VehicleSeatIndicator:ClearAllPoints()
+			VehicleSeatIndicator:SetPoint("TOPRIGHT", 0, -50)
+		end
 
 		DurabilityFrame:ClearAllPoints()
 		DurabilityFrame:SetPoint("TOPRIGHT", -35, -50)
@@ -131,8 +156,10 @@ function frame:Place()
 		frame:ClearAllPoints()
 		frame:SetPoint("BOTTOM", Minimap, "TOP", 0, -30)
 
-		VehicleSeatIndicator:ClearAllPoints()
-		VehicleSeatIndicator:SetPoint("BOTTOMRIGHT", 0, 80)
+		if libVersionUnification.IsRetail then
+			VehicleSeatIndicator:ClearAllPoints()
+			VehicleSeatIndicator:SetPoint("BOTTOMRIGHT", 0, 80)
+		end
 
 		DurabilityFrame:ClearAllPoints()
 		DurabilityFrame:SetPoint("BOTTOMRIGHT", -35, 80)

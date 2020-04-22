@@ -31,7 +31,7 @@ local defaultSettings = {
 }
 
 OMM = {}
-ns.Util.CopyTable(defaultSettings, OMM)
+ns.Util.Table.Copy(defaultSettings, OMM)
 
 ------
 -- Menu
@@ -75,7 +75,7 @@ local function onDefault(self, ...)
 	ns.Util.CopyTable(defaultSettings, OMM)
 end
 
-local panel = libOptions(addonName, nil, onRefresh, onOkay, onCancel, onDefault)
+local panel = libOptions:New(addonName, nil, onRefresh, onOkay, onCancel, onDefault)
 ns.Options = panel
 
 -- Page setup
