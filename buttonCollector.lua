@@ -25,6 +25,7 @@ ns.ButtonCollectorDropdown:SetBackdrop({
 ns.ButtonCollectorDropdown:SetBackdropColor(0, 0, 0, 1)
 ns.ButtonCollectorDropdown:SetClampedToScreen(true)
 ns.ButtonCollectorDropdown:Hide()
+ns.ButtonCollectorDropdown:SetFrameStrata("TOOLTIP")
 
 -- Instance difficulty
 if libVersionUnification.IsRetail then
