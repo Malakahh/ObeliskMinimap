@@ -13,6 +13,11 @@ local function MoveLateFrames()
 	if libVersionUnification.IsRetail then
 		VehicleSeatIndicator:SetParent(frame)
 		VehicleSeatIndicator:SetFrameStrata("BACKGROUND")
+
+		GarrisonLandingPageMinimapButton:SetParent(frame)
+		GarrisonLandingPageMinimapButton:ClearAllPoints()
+		GarrisonLandingPageMinimapButton:SetPoint("TOPLEFT", 15, -15)
+		GarrisonLandingPageMinimapButton:SetPoint("BOTTOMRIGHT", frame, "TOPLEFT", 43, -43)
 	end
 
 	DurabilityFrame:SetParent(frame)
@@ -26,11 +31,6 @@ function frame:PLAYER_LOGIN( ... )
 	ns.Options:RegisterForOkay(self.Place)
 
 	if libVersionUnification.IsRetail then
-		GarrisonLandingPageMinimapButton:SetParent(self)
-		GarrisonLandingPageMinimapButton:ClearAllPoints()
-		GarrisonLandingPageMinimapButton:SetPoint("TOPLEFT", 15, -15)
-		GarrisonLandingPageMinimapButton:SetPoint("BOTTOMRIGHT", self, "TOPLEFT", 43, -43)
-
 		QueueStatusMinimapButton:SetParent(self)
 		QueueStatusMinimapButton:SetSize(33, 33)
 		QueueStatusMinimapButton:ClearAllPoints()

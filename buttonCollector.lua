@@ -12,7 +12,7 @@ end
 
 local cellSize = 32
 
-ns.ButtonCollectorDropdown = CreateFrame("FRAME", addonName .. "ButtonCollector", MinimapCluster)
+ns.ButtonCollectorDropdown = CreateFrame("FRAME", addonName .. "ButtonCollector", MinimapCluster, "BackdropTemplate")
 ns.ButtonCollectorDropdown:SetPoint("CENTER")
 ns.ButtonCollectorDropdown:SetBackdrop({
 	bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
