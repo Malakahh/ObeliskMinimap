@@ -1,3 +1,6 @@
+r14
+-	Update for Shadowlands
+
 r13
 -	Updated to support Classic and Retail
 -	Added Questie and TinketMenu special cases for button collector
