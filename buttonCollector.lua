@@ -25,7 +25,7 @@ ns.ButtonCollectorDropdown:SetBackdrop({
 ns.ButtonCollectorDropdown:SetBackdropColor(0, 0, 0, 1)
 ns.ButtonCollectorDropdown:SetClampedToScreen(true)
 ns.ButtonCollectorDropdown:Hide()
-ns.ButtonCollectorDropdown:SetFrameStrata("TOOLTIP")
+ns.ButtonCollectorDropdown:SetFrameStrata("WORLD")
 
 -- Instance difficulty
 if libVersionUnification.IsRetail then
@@ -78,7 +78,7 @@ local padding = 7
 
 ns.ButtonCollectorDropdown.gridView = libGridView(0, 0, nil, ns.ButtonCollectorDropdown);
 ns.ButtonCollectorDropdown.gridView:SetScript("OnEvent", function ( self, event, ... ) self[event](self, ...) end)
-ns.ButtonCollectorDropdown.gridView:RegisterEvent("PLAYER_LOGIN")
+ns.ButtonCollectorDropdown.gridView:RegisterEvent("PLAYER_ENTERING_WORLD")
 ns.ButtonCollectorDropdown.gridView:SetPoint("TOPLEFT", padding, -math.ceil(ns.ButtonCollectorDropdown.coordinates:GetHeight()) - spacing - coordnateOffset)
 ns.ButtonCollectorDropdown.gridView:SetPoint("BOTTOMRIGHT", -padding, padding)
 
@@ -157,7 +157,7 @@ local function HandleSpecialCase(val)
 	end
 end
 
-function ns.ButtonCollectorDropdown.gridView:PLAYER_LOGIN( ... )
+function ns.ButtonCollectorDropdown.gridView:PLAYER_ENTERING_WORLD( ... )
 	ns.Options:RegisterForOkay(self.Initialize, self)
 	self:SetCellSize(cellSize, cellSize)
 	self:CollectButtons()
@@ -173,17 +173,14 @@ function ns.ButtonCollectorDropdown.gridView:CollectButtons( ... )
 	for k,_ in pairs(Includes) do
 		local item = _G[k]
 		if item ~= nil then
-			-- item:SetSize(cellSize, cellSize)
-			-- self:AddItem(item)
 			self:HandleButton(item)
 		end
 	end
 
 	for k,v in pairs({Minimap:GetChildren()}) do
 		if not IsExcluded(v) and v:IsVisible() then
-			-- v:SetSize(cellSize, cellSize)
-			-- self:AddItem(v)
 			self:HandleButton(v)
+
 		end
 
 		HandleSpecialCase(v)
@@ -203,4 +200,3 @@ function ns.ButtonCollectorDropdown.gridView:AdjustSize()
 		math.ceil(cellSize * OMM.ButtonCollector.NumColumns + padding * 2),
 		math.ceil(cellSize * numRows + spacing + ns.ButtonCollectorDropdown.coordinates:GetHeight() + padding + coordnateOffset))
 end
-

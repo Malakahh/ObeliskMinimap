@@ -37,7 +37,7 @@ function frame:PLAYER_LOGIN( ... )
 		QueueStatusMinimapButton:SetPoint("TOPLEFT", 41, -12)
 		QueueStatusMinimapButtonBorder:Hide()
 		QueueStatusMinimapButtonIcon:SetSize(QueueStatusMinimapButton:GetSize())
-	elseif libVersionUnification.IsClassic then
+	elseif libVersionUnification.IsRemaster then
 		MinimapToggleButton:Hide()
 		GameTimeFrame:Hide()
 	end
@@ -64,7 +64,7 @@ if libVersionUnification.IsRetail then
 		0.16602
 	}
 	frame.tex:SetTexCoord(unpack(insets))
-elseif libVersionUnification.IsClassic then
+elseif libVersionUnification.IsRemaster then
 	local insets = {
 		0,
 		0.57813,
